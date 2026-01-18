@@ -1,4 +1,11 @@
-import { pgTable, serial, integer, date, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  integer,
+  date,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 import { items } from './item.js';
 
 export const maintenance = pgTable('maintenance', {
@@ -7,7 +14,7 @@ export const maintenance = pgTable('maintenance', {
   itemId: integer('item_id')
     .notNull()
     .references(() => items.id, { onDelete: 'cascade' }),
-    
+
   date: date('date').notNull(),
   nextDue: date('next_due'),
 
