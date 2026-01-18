@@ -5,3 +5,4 @@ node_modules
 drizzle
 *.DS_Store
 coverage
+.DS_Store
