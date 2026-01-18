@@ -6,3 +6,6 @@ drizzle
 *.DS_Store
 coverage
 .DS_Store
+logs/
+*/*.log
+logs/
