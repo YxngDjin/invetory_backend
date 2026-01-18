@@ -12,7 +12,7 @@
     "#routes/*": "./src/routes/*",
     "#services/*": "./src/services/*",
     "#utils/*": "./src/utils/*",
-    "#validations/*": "./src/validations/*"
+    "#validations/*": "./src/validation/*"
   },
   "scripts": {
     "dev": "node --watch src/index.js",

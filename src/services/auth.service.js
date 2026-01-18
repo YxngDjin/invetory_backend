@@ -47,7 +47,7 @@ export const createUser = async ({ firstname, lastname, email, password, role = 
         created_at: user.created_at,
       });
 
-    logger.info(`User ${newUser.email} created successfully`);
+    logger.info('User created successfully', { userId: newUser.id });
     return newUser;
   } catch (e) {
     logger.error('Error creating the user', e);
@@ -78,6 +78,7 @@ export const authenticateUser = async ({ email, password }) => {
       id: existingUser.id,
       firstname: existingUser.firstname,
       lastname: existingUser.lastname,
+      email: existingUser.email,
       role: existingUser.role,
       created_at: existingUser.created_at,
     };

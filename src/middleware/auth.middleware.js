@@ -15,7 +15,7 @@ export const authenticateToken = (req, res, next) => {
     const decoded = jwttoken.verify(token);
     req.user = decoded;
 
-    logger.info(`User authenticated ${decoded.email} (${decoded.role})`);
+    logger.info(`User authenticated ${decoded.id} (${decoded.role})`);
     next();
   } catch (e) {
     logger.error('Authentication error:', e);
