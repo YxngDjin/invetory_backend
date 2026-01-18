@@ -1,7 +1,7 @@
 import logger from '#config/logger.js';
 import bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
-import { user } from '#models/user.js';
+import { users } from '#models/user.js';
 import { db } from '#config/database.js';
 
 export const hashPassword = async password => {
@@ -26,8 +26,8 @@ export const createUser = async ({ firstname, lastname, email, password, role = 
   try {
     const existingUser = await db
       .select()
-      .from(user)
-      .where(eq(user.email, email))
+      .from(users)
+      .where(eq(users.email, email))
       .limit(1);
         
     if (existingUser.length > 0) 
@@ -36,15 +36,15 @@ export const createUser = async ({ firstname, lastname, email, password, role = 
     const password_hash = await hashPassword(password);
 
     const [newUser] = await db
-      .insert(user)
+      .insert(users)
       .values({ firstname, lastname, email, password: password_hash, role })
       .returning({
-        id: user.id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        role: user.role,
-        created_at: user.created_at,
+        id: users.id,
+        firstname: users.firstname,
+        lastname: users.lastname,
+        email: users.email,
+        role: users.role,
+        created_at: users.createdAt,
       });
 
     logger.info('User created successfully', { userId: newUser.id });
@@ -59,8 +59,8 @@ export const authenticateUser = async ({ email, password }) => {
   try {
     const [existingUser] = await db
       .select()
-      .from(user)
-      .where(eq(user.email, email))
+      .from(users)
+      .where(eq(users.email, email))
       .limit(1);
 
     if (!existingUser) {
@@ -80,7 +80,7 @@ export const authenticateUser = async ({ email, password }) => {
       lastname: existingUser.lastname,
       email: existingUser.email,
       role: existingUser.role,
-      created_at: existingUser.created_at,
+      created_at: existingUser.createdAt,
     };
   } catch (e) {
     logger.error('Error authenticating the user', e);
