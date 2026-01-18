@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.routes.js';
+import userRouter from './routes/user.routes.js';
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
