@@ -9,7 +9,8 @@ export const userIdSchema = z.object({
 });
 
 export const updateUserSchema = z.object({
-  name: z.string().min(2).max(100).trim().optional(),
+  firstname: z.string().min(2).max(100).trim().optional(),
+  lastname: z.string().min(2).max(100).trim().optional(),
   email: z.email().max(255).toLowerCase().trim().optional(),
   role: z.enum(['user', 'admin']).optional(),
 })

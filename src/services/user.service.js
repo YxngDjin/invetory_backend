@@ -84,7 +84,7 @@ export const updateUser = async (id, updates) => {
         updated_at: users.updatedAt
       });
 
-    logger.info(`User${updatedUser.email} updated successfully`);
+    logger.info(`User ${updatedUser.email} updated successfully`);
     return updatedUser;
 
   } catch (e) {
