@@ -14,5 +14,5 @@ export const maintenance = pgTable('maintenance', {
   notes: text('notes'),
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow().defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

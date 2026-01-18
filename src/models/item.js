@@ -18,5 +18,5 @@ export const items = pgTable('items', {
   }),
 
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow().defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
