@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-
+import authRouter from './routes/auth.routes.js';
 
 const app = express();
 
@@ -22,7 +22,6 @@ app.use(
 
 // Middlewares
 
-
 app.get('/', (req, res) => {
   logger.info('Hello from Inventory Backend!');
   res.status(200).send('Hello from Inventory Backend!');
@@ -35,6 +34,8 @@ app.get('/health', (req, res) => {
     uptime: process.uptime(),
   });
 });
+
+app.use('/api/auth', authRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });

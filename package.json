@@ -6,13 +6,13 @@
   "imports": {
     "#src/*": "./src/*",
     "#config/*": "./src/config/*",
-    "#controllers": "./src/controllers/*",
-    "#middleware": "./src/middleware/*",
-    "#models": "./src/models/*",
-    "#routes": "./src/routes/*",
-    "#service": "./src/services/*",
-    "#utils": "./src/utils/*",
-    "#validation": "./src/validation"
+    "#controllers/*": "./src/controllers/*",
+    "#middleware/*": "./src/middleware/*",
+    "#models/*": "./src/models/*",
+    "#routes/*": "./src/routes/*",
+    "#services/*": "./src/services/*",
+    "#utils/*": "./src/utils/*",
+    "#validation/*": "./src/validation/*"
   },
   "scripts": {
     "dev": "node --watch src/index.js",

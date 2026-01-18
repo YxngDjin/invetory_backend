@@ -1,4 +1,11 @@
-import { pgTable, serial, varchar, integer, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  varchar,
+  integer,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 import { projects } from './project.js';
 
 export const items = pgTable('items', {
