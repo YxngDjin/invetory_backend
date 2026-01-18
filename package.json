@@ -23,7 +23,8 @@
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "keywords": [],
   "author": "",
