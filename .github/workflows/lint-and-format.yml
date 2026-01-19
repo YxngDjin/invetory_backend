@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+      - development
       - staging
   pull_request:
     branches:
       - main
+      - development
       - staging
 jobs:
   lint-and-format:
