@@ -1,6 +1,9 @@
 import logger from '#config/logger.js';
 import { getUserById, updateUser, deleteUser } from '#services/user.service.js';
-import { userIdSchema, updateUserSchema } from '#validation/users.validation.js';
+import {
+  userIdSchema,
+  updateUserSchema,
+} from '#validation/users.validation.js';
 import { formatValidationError } from '#utils/format.js';
 import { and, desc, eq, getTableColumns, ilike, or, sql } from 'drizzle-orm';
 import { users } from '#models/user.js';
@@ -10,10 +13,13 @@ export const fetchAllUsers = async (req, res, next) => {
   try {
     logger.info('Getting all Users...');
 
-    const { search, role, page = 1, limit=10 } = req.query;
+    const { search, role, page = 1, limit = 10 } = req.query;
 
     const currentPage = Math.max(1, parseInt(String(page), 10) || 1);
-    const limitPerPage = Math.min(Math.max(1, parseInt(String(limit), 10) || 10), 100);
+    const limitPerPage = Math.min(
+      Math.max(1, parseInt(String(limit), 10) || 10),
+      100
+    );
 
     const offset = (currentPage - 1) * limitPerPage;
 
@@ -24,7 +30,7 @@ export const fetchAllUsers = async (req, res, next) => {
         or(
           ilike(users.firstname, `%${search}%`),
           ilike(users.lastname, `%${search}%`),
-          ilike(users.email, `%${search}%`),
+          ilike(users.email, `%${search}%`)
         )
       );
     }
@@ -33,10 +39,11 @@ export const fetchAllUsers = async (req, res, next) => {
       filterConditions.push(eq(users.role, role));
     }
 
-    const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined;
+    const whereClause =
+      filterConditions.length > 0 ? and(...filterConditions) : undefined;
 
     const countResult = await db
-      .select({ count: sql`count(*)`})
+      .select({ count: sql`count(*)` })
       .from(users)
       .where(whereClause);
 
@@ -44,8 +51,9 @@ export const fetchAllUsers = async (req, res, next) => {
 
     const usersList = await db
       .select({
-        ...getTableColumns(users)
-      }).from(users)
+        ...getTableColumns(users),
+      })
+      .from(users)
       .where(whereClause)
       .orderBy(desc(users.createdAt))
       .limit(limitPerPage)
@@ -58,22 +66,20 @@ export const fetchAllUsers = async (req, res, next) => {
         limit: limitPerPage,
         total: totalCount,
         totalPages: Math.ceil(totalCount / limitPerPage),
-      }
+      },
     });
-
   } catch (e) {
     logger.error(e);
     next(e);
   }
 };
 
-
 export const fetchUserById = async (req, res, next) => {
   try {
     logger.info(`Getting user by id: ${req.params.id}`);
 
     const validationResult = userIdSchema.safeParse({ id: req.params.id });
-        
+
     if (!validationResult.success) {
       return res.status(400).json({
         error: 'Validation failed',
@@ -93,7 +99,7 @@ export const fetchUserById = async (req, res, next) => {
     logger.error(`Error fetching user by ID: ${e.message}`);
     if (e.message === 'User not found') {
       return res.status(404).json({ error: 'User not found' });
-    };
+    }
 
     next(e);
   }

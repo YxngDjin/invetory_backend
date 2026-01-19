@@ -8,12 +8,13 @@ export const userIdSchema = z.object({
     .refine(val => val > 0, 'ID must be greater than 0'),
 });
 
-export const updateUserSchema = z.object({
-  firstname: z.string().min(2).max(100).trim().optional(),
-  lastname: z.string().min(2).max(100).trim().optional(),
-  email: z.email().max(255).toLowerCase().trim().optional(),
-  role: z.enum(['user', 'admin']).optional(),
-})
+export const updateUserSchema = z
+  .object({
+    firstname: z.string().min(2).max(100).trim().optional(),
+    lastname: z.string().min(2).max(100).trim().optional(),
+    email: z.email().max(255).toLowerCase().trim().optional(),
+    role: z.enum(['user', 'admin']).optional(),
+  })
   .refine(
     data => {
       return Object.keys(data).length > 0;

@@ -16,9 +16,16 @@ export const signup = async (req, res, next) => {
       });
     }
 
-    const { firstname, lastname, email, password, role } = validationResult.data;
+    const { firstname, lastname, email, password, role } =
+      validationResult.data;
 
-    const user = await createUser({ firstname, lastname, email, password, role});
+    const user = await createUser({
+      firstname,
+      lastname,
+      email,
+      password,
+      role,
+    });
 
     const token = jwttoken.sign({
       id: user.id,
@@ -41,7 +48,7 @@ export const signup = async (req, res, next) => {
   } catch (e) {
     logger.error('Error registering the user', e);
 
-    if(e.message === 'User with this email already exists') {
+    if (e.message === 'User with this email already exists') {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
@@ -61,7 +68,7 @@ export const signin = async (req, res, next) => {
     }
 
     const { email, password } = validationResult.data;
-        
+
     const user = await authenticateUser({ email, password });
 
     const token = jwttoken.sign({
@@ -86,7 +93,7 @@ export const signin = async (req, res, next) => {
 
     if (e.message === 'User not found' || e.message === 'Invalid password') {
       return res.status(401).json({
-        error: 'Invalid credentials'
+        error: 'Invalid credentials',
       });
     }
 

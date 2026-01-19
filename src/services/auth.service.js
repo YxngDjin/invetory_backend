@@ -22,15 +22,21 @@ export const comparePassword = async (password, hashedPassword) => {
   }
 };
 
-export const createUser = async ({ firstname, lastname, email, password, role = 'user' }) => {
+export const createUser = async ({
+  firstname,
+  lastname,
+  email,
+  password,
+  role = 'user',
+}) => {
   try {
     const existingUser = await db
       .select()
       .from(users)
       .where(eq(users.email, email))
       .limit(1);
-        
-    if (existingUser.length > 0) 
+
+    if (existingUser.length > 0)
       throw new Error('User with this email already exists');
 
     const password_hash = await hashPassword(password);
@@ -67,7 +73,10 @@ export const authenticateUser = async ({ email, password }) => {
       throw new Error('User not found');
     }
 
-    const isPasswordValid = await comparePassword(password, existingUser.password);
+    const isPasswordValid = await comparePassword(
+      password,
+      existingUser.password
+    );
 
     if (!isPasswordValid) {
       throw new Error('Invalid password');

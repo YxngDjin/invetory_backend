@@ -32,7 +32,7 @@ export const getUserById = async id => {
         email: users.email,
         role: users.role,
         created_at: users.createdAt,
-        updated_at: users.updatedAt
+        updated_at: users.updatedAt,
       })
       .from(users)
       .where(eq(users.id, id))
@@ -59,7 +59,7 @@ export const updateUser = async (id, updates) => {
         .from(users)
         .where(eq(users.email, updates.email))
         .limit(1);
-            
+
       if (emailExists) {
         throw new Error('Email already exists');
       }
@@ -81,12 +81,11 @@ export const updateUser = async (id, updates) => {
         email: users.email,
         role: users.role,
         created_at: users.createdAt,
-        updated_at: users.updatedAt
+        updated_at: users.updatedAt,
       });
 
     logger.info(`User ${updatedUser.email} updated successfully`);
     return updatedUser;
-
   } catch (e) {
     logger.error(`Error updating user ${id}:`, e);
     throw e;
@@ -105,7 +104,7 @@ export const deleteUser = async id => {
         firstname: users.firstname,
         lastname: users.lastname,
         email: users.email,
-        role: users.role
+        role: users.role,
       });
 
     logger.info(`User ${deleteUser.email} deleted successfully`);
