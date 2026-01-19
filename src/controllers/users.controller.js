@@ -1,19 +1,66 @@
 import logger from '#config/logger.js';
-import { getAllUsers, getUserById, updateUser, deleteUser } from '#services/user.service.js';
+import { getUserById, updateUser, deleteUser } from '#services/user.service.js';
 import { userIdSchema, updateUserSchema } from '#validation/users.validation.js';
 import { formatValidationError } from '#utils/format.js';
+import { and, desc, eq, getTableColumns, ilike, or, sql } from 'drizzle-orm';
+import { users } from '#models/user.js';
+import { db } from '#config/database.js';
 
 export const fetchAllUsers = async (req, res, next) => {
   try {
     logger.info('Getting all Users...');
 
-    const allUsers = await getAllUsers();
+    const { search, role, page = 1, limit=10 } = req.query;
 
-    res.json({
-      message: 'Successfully fetched all users',
-      users: allUsers,
-      count: allUsers.length,
+    const currentPage = Math.max(1, parseInt(String(page), 10) || 1);
+    const limitPerPage = Math.min(Math.max(1, parseInt(String(limit), 10) || 10), 100);
+
+    const offset = (currentPage - 1) * limitPerPage;
+
+    const filterConditions = [];
+
+    if (search) {
+      filterConditions.push(
+        or(
+          ilike(users.firstname, `%${search}%`),
+          ilike(users.lastname, `%${search}%`),
+          ilike(users.email, `%${search}%`),
+        )
+      );
+    }
+
+    if (role) {
+      filterConditions.push(eq(users.role, role));
+    }
+
+    const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined;
+
+    const countResult = await db
+      .select({ count: sql`count(*)`})
+      .from(users)
+      .where(whereClause);
+
+    const totalCount = countResult[0]?.count || 0;
+
+    const usersList = await db
+      .select({
+        ...getTableColumns(users)
+      }).from(users)
+      .where(whereClause)
+      .orderBy(desc(users.createdAt))
+      .limit(limitPerPage)
+      .offset(offset);
+
+    res.status(200).json({
+      data: usersList,
+      pagination: {
+        page: currentPage,
+        limit: limitPerPage,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limitPerPage),
+      }
     });
+
   } catch (e) {
     logger.error(e);
     next(e);
