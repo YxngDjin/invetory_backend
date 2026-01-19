@@ -9,3 +9,15 @@ coverage
 logs/
 */*.log
 logs/
+
+# Editor directories and files
+
+.vscode/_
+!.vscode/extensions.json
+.idea
+.DS_Store
+_.suo
+_.ntvs_
+_.njsproj
+_.sln
+\*.sw?
