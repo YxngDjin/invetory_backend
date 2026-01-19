@@ -10,7 +10,10 @@ export const fetchAllItems = async (req, res, next) => {
     const { search, status, page = 1, limit = 10 } = req.query;
 
     const currentPage = Math.max(1, parseInt(String(page), 10) || 1);
-    const limitPerPage = Math.min(Math.max(1, parseInt(String(limit), 10) || 10), 100);
+    const limitPerPage = Math.min(
+      Math.max(1, parseInt(String(limit), 10) || 10),
+      100
+    );
 
     const offset = (currentPage - 1) * limitPerPage;
 
@@ -31,7 +34,8 @@ export const fetchAllItems = async (req, res, next) => {
       filterConditions.push(eq(items.status, status));
     }
 
-    const whereClause = filterConditions.length > 0 ? and(...filterConditions) : undefined;
+    const whereClause =
+      filterConditions.length > 0 ? and(...filterConditions) : undefined;
 
     const countResult = await db
       .select({ count: sql`count(*)` })
@@ -59,7 +63,6 @@ export const fetchAllItems = async (req, res, next) => {
         totalPages: Math.ceil(totalCount / limitPerPage),
       },
     });
-
   } catch (e) {
     logger.error('Error fetching all items', e);
     next(e);
