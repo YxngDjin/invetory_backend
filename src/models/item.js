@@ -5,8 +5,11 @@ import {
   integer,
   text,
   timestamp,
+  pgEnum,
 } from 'drizzle-orm/pg-core';
 import { projects } from './project.js';
+
+export const statusEnum = pgEnum('item_status', ['free', 'in use', 'defect']);
 
 export const items = pgTable('items', {
   id: serial('id').primaryKey(),
@@ -18,6 +21,7 @@ export const items = pgTable('items', {
 
   notes: varchar('notes'),
 
+  status: statusEnum('status').notNull().default('free'),
   qrCode: text('qr_code').notNull(),
 
   projectId: integer('project_id').references(() => projects.id, {
