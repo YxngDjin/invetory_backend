@@ -1,4 +1,8 @@
-import { createItem, fetchAllItems, fetchItemById } from '#src/controllers/item.controller.js';
+import {
+  createItem,
+  fetchAllItems,
+  fetchItemById,
+} from '#src/controllers/item.controller.js';
 import express from 'express';
 
 const itemRouter = express.Router();

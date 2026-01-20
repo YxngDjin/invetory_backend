@@ -74,7 +74,8 @@ export const fetchAllItems = async (req, res, next) => {
 export const fetchItemById = async (req, res) => {
   const itemId = parseInt(req.params.id);
 
-  if (!isFinite(itemId)) return res.status(400).json({ error: 'No Item found' });
+  if (!isFinite(itemId))
+    return res.status(400).json({ error: 'No Item found' });
 
   const [itemDetails] = await db
     .select({
