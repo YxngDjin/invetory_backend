@@ -80,17 +80,25 @@ export const fetchItemById = async (req, res) => {
   const [itemDetails] = await db
     .select({
       ...getTableColumns(items),
+
       project: {
         ...getTableColumns(projects),
       },
-      maintenance: {
-        ...getTableColumns(maintenance),
-      },
+
+      maintenance: sql`
+      COALESCE(
+        json_agg(
+          DISTINCT ${maintenance}
+        ) FILTER (WHERE ${maintenance.id} IS NOT NULL),
+        '[]'
+      )
+    `.as('maintenance'),
     })
     .from(items)
     .leftJoin(projects, eq(items.projectId, projects.id))
     .leftJoin(maintenance, eq(items.id, maintenance.itemId))
-    .where(eq(items.id, itemId));
+    .where(eq(items.id, itemId))
+    .groupBy(items.id, projects.id);
 
   if (!itemDetails) return res.status(404).json({ error: 'No Item found' });
 
