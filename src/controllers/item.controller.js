@@ -71,46 +71,69 @@ export const fetchAllItems = async (req, res, next) => {
   }
 };
 
-export const fetchItemById = async (req, res) => {
-  const itemId = parseInt(req.params.id);
+export const fetchItemById = async (req, res, next) => {
+  try {
+    const itemId = parseInt(req.params.id);
 
-  if (!isFinite(itemId))
-    return res.status(400).json({ error: 'No Item found' });
+    if (!isFinite(itemId))
+      return res.status(400).json({ error: 'No Item found' });
 
-  const [itemDetails] = await db
-    .select({
-      ...getTableColumns(items),
+    const [itemDetails] = await db
+      .select({
+        ...getTableColumns(items),
 
-      project: {
-        ...getTableColumns(projects),
-      },
+        project: {
+          ...getTableColumns(projects),
+        },
 
-      maintenance: sql`
-      COALESCE(
-        json_agg(
-          DISTINCT ${maintenance}
-        ) FILTER (WHERE ${maintenance.id} IS NOT NULL),
-        '[]'
-      )
-    `.as('maintenance'),
-    })
-    .from(items)
-    .leftJoin(projects, eq(items.projectId, projects.id))
-    .leftJoin(maintenance, eq(items.id, maintenance.itemId))
-    .where(eq(items.id, itemId))
-    .groupBy(items.id, projects.id);
+        maintenance: sql`
+        COALESCE(
+          json_agg(
+            DISTINCT ${maintenance}
+          ) FILTER (WHERE ${maintenance.id} IS NOT NULL),
+          '[]'
+        )
+      `.as('maintenance'),
+      })
+      .from(items)
+      .leftJoin(projects, eq(items.projectId, projects.id))
+      .leftJoin(maintenance, eq(items.id, maintenance.itemId))
+      .where(eq(items.id, itemId))
+      .groupBy(items.id, projects.id);
 
-  if (!itemDetails) return res.status(404).json({ error: 'No Item found' });
+    if (!itemDetails) return res.status(404).json({ error: 'No Item found' });
 
-  res.status(200).json({ data: itemDetails });
+    res.status(200).json({ data: itemDetails });
+  } catch (e) {
+    logger.error('Error fetching item by ID', e);
+    next(e);
+  }
 };
 
 export const createItem = async (req, res, next) => {
   try {
+    const {
+      name,
+      manufacturer,
+      itemNumber,
+      inventoryNumber,
+      notes,
+      status,
+      projectId,
+      qrCode = 'qrCode',
+    } = req.body;
+
     const [createItem] = await db
       .insert(items)
       .values({
-        ...req.body,
+        name,
+        manufacturer,
+        itemNumber,
+        inventoryNumber,
+        notes,
+        status,
+        projectId,
+        qrCode,
       })
       .returning({ id: items.id });
 
