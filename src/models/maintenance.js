@@ -5,11 +5,13 @@ import {
   date,
   text,
   timestamp,
+  varchar,
 } from 'drizzle-orm/pg-core';
 import { items } from './item.js';
 
 export const maintenance = pgTable('maintenance', {
   id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }),
 
   itemId: integer('item_id')
     .notNull()

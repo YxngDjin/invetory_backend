@@ -2,6 +2,8 @@ import logger from '#config/logger.js';
 import { and, desc, eq, getTableColumns, ilike, or, sql } from 'drizzle-orm';
 import { items } from '#models/item.js';
 import { db } from '#config/database.js';
+import { projects } from '#models/project.js';
+import { maintenance } from '#models/maintenance.js';
 
 export const fetchAllItems = async (req, res, next) => {
   try {
@@ -65,6 +67,81 @@ export const fetchAllItems = async (req, res, next) => {
     });
   } catch (e) {
     logger.error('Error fetching all items', e);
+    next(e);
+  }
+};
+
+export const fetchItemById = async (req, res, next) => {
+  try {
+    const itemId = parseInt(req.params.id);
+
+    if (!isFinite(itemId))
+      return res.status(400).json({ error: 'No Item found' });
+
+    const [itemDetails] = await db
+      .select({
+        ...getTableColumns(items),
+
+        project: {
+          ...getTableColumns(projects),
+        },
+
+        maintenance: sql`
+        COALESCE(
+          json_agg(
+            DISTINCT ${maintenance}
+          ) FILTER (WHERE ${maintenance.id} IS NOT NULL),
+          '[]'
+        )
+      `.as('maintenance'),
+      })
+      .from(items)
+      .leftJoin(projects, eq(items.projectId, projects.id))
+      .leftJoin(maintenance, eq(items.id, maintenance.itemId))
+      .where(eq(items.id, itemId))
+      .groupBy(items.id, projects.id);
+
+    if (!itemDetails) return res.status(404).json({ error: 'No Item found' });
+
+    res.status(200).json({ data: itemDetails });
+  } catch (e) {
+    logger.error('Error fetching item by ID', e);
+    next(e);
+  }
+};
+
+export const createItem = async (req, res, next) => {
+  try {
+    const {
+      name,
+      manufacturer,
+      itemNumber,
+      inventoryNumber,
+      notes,
+      status,
+      projectId,
+      qrCode = 'qrCode',
+    } = req.body;
+
+    const [createItem] = await db
+      .insert(items)
+      .values({
+        name,
+        manufacturer,
+        itemNumber,
+        inventoryNumber,
+        notes,
+        status,
+        projectId,
+        qrCode,
+      })
+      .returning({ id: items.id });
+
+    if (!createItem) return res.status(400).json({ error: 'Item not created' });
+
+    res.status(200).json({ data: createItem });
+  } catch (e) {
+    logger.error('Error creating item', e);
     next(e);
   }
 };
