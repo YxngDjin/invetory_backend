@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/user.routes.js';
 import itemRouter from './routes/item.routes.js';
+import projectRouter from './routes/project.routes.js';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/users', userRouter);
 app.use('/api/items', itemRouter);
+app.use('/api/projects', projectRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found' });
