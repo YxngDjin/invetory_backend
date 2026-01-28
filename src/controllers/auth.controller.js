@@ -112,3 +112,13 @@ export const signout = (req, res, next) => {
     next(e);
   }
 };
+
+export const getRefineMeData = (req, res) => {
+  res.status(200).json({
+    user: {
+      id: req.user.id,
+      email: req.user.email,
+      role: req.user.role,
+    },
+  });
+};

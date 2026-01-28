@@ -9,7 +9,7 @@ import express from 'express';
 
 const userRouter = express.Router();
 
-userRouter.get('/', fetchAllUsers); //authenticateToken, requireRole('admin')
+userRouter.get('/', authenticateToken, requireRole('admin'), fetchAllUsers ); //authenticateToken, requireRole('admin')
 userRouter.get('/:id', authenticateToken, fetchUserById);
 userRouter.put('/:id', authenticateToken, updateUserById);
 userRouter.delete(
